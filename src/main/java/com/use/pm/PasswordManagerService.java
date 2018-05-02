@@ -79,7 +79,7 @@ public class PasswordManagerService {
   public static void main(String[] args) {
     PasswordManagerService service = new PasswordManagerService();
     PassSettingRequestDTO settingRequest
-        = new PassSettingRequestDTO("reddit",10);
+        = new PassSettingRequestDTO("github.com",10);
     String pass = service.makePassword(settingRequest);
     System.out.println(pass);
   }
