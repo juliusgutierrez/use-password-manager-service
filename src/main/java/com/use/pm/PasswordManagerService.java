@@ -42,12 +42,12 @@ public class PasswordManagerService {
   }
 
 
-  public static String getSalt(String service) {
+  private String getSalt(String service) {
     Validate.notNull(service, "service should not be null");
     return getHex(SECRET_KEY, service);
   }
 
-  public static String getHex(String salt, String password) {
+  private String getHex(String salt, String password) {
     Validate.notNull(password, "password should not be null");
     return Hashing.sha256()
         .hashString(salt + password, StandardCharsets.UTF_8)
@@ -71,7 +71,7 @@ public class PasswordManagerService {
     return builder.toString();
   }
 
-  public BigInteger div(BigInteger x, BigInteger y) {
+  private BigInteger div(BigInteger x, BigInteger y) {
     return new BigInteger(x.toString())
         .divide(new BigInteger(y.toString()));
   }
