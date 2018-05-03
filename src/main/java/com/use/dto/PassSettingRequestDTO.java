@@ -6,7 +6,8 @@ package com.use.dto;
 public class PassSettingRequestDTO {
 
   private static final int DEFAULT_PASSWORD_LENGTH = 8;
-  private boolean hasSymbols = true;
+  private static final int LIMIT_PASSWORD_LENGTH = 40;
+  private boolean hasSymbols;
   private String service;
   private int passwordLength;
   private String secretKey;
@@ -40,6 +41,8 @@ public class PassSettingRequestDTO {
   public int getPasswordLength() {
     if(passwordLength == 0) {
       return DEFAULT_PASSWORD_LENGTH;
+    } else if (passwordLength > LIMIT_PASSWORD_LENGTH) {
+      return LIMIT_PASSWORD_LENGTH;
     }
     return passwordLength;
   }

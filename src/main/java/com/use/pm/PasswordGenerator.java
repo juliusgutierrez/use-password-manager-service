@@ -4,13 +4,17 @@ import com.google.common.hash.Hashing;
 import com.use.dto.PassSettingRequestDTO;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Random;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.Validate;
 
 /**
  * Created by julius on 02/05/2018.
  */
-public class PasswordManagerService {
+public class PasswordGenerator {
 
   private static final String UPPER_CASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   private static final String LOWER_CASE = "abcdefghijklmnopqrstuvwxyz";
@@ -18,15 +22,21 @@ public class PasswordManagerService {
   private static final String SYMBOLS = "!@#$%^&*()-_";
   private static final int DIGIT_16 = 16;
 
+  public String makePassword(int length, boolean hasSysbol) {
+    PassSettingRequestDTO settings = new PassSettingRequestDTO();
+    settings.setHasSymbols(hasSysbol);
+    settings.setPasswordLength(length);
+    return makePassword(settings);
+  }
+
   public String makePassword(PassSettingRequestDTO settings) {
 
-    final String password = RandomStringUtils.random(settings.getPasswordLength());
-    final String salt = getSalt(settings.getSecretKey(), settings.getService());
-    final String hexed = getHex(salt, password);
+    final String randomString = RandomStringUtils.random(settings.getPasswordLength());
+    final String hexed = getHex(randomString);
     BigInteger num = convertToDecimal(hexed);
 
-    final String characters = buildBasedCharacters(settings.hasSymbols());
-    char[] based = characters.toCharArray();
+    final String characters = buildBasedCharacters(settings);
+    final char[] based = characters.toCharArray();
     Integer basedLength = based.length;
 
     StringBuilder builder = new StringBuilder();
@@ -34,7 +44,6 @@ public class PasswordManagerService {
       num = div(num, new BigInteger(basedLength.toString()));
       int indeces = Math.abs(num.intValue() % basedLength);
       builder.append(based[indeces]);
-
     }
 
     return builder.toString();
@@ -52,17 +61,23 @@ public class PasswordManagerService {
         .toString();
   }
 
+  private String getHex(String password) {
+    return Hashing.sha256()
+        .hashString(password, StandardCharsets.UTF_8)
+        .toString();
+  }
+
   private BigInteger convertToDecimal(String hexed) {
     return new BigInteger(hexed, DIGIT_16);
   }
 
-  private String buildBasedCharacters(final boolean hasSymbols) {
+  private String buildBasedCharacters(PassSettingRequestDTO settings) {
     StringBuilder builder = new StringBuilder();
     builder.append(LOWER_CASE);
     builder.append(UPPER_CASE);
     builder.append(NUMBERS);
 
-    if (hasSymbols) {
+    if (settings.hasSymbols()) {
       builder.append(SYMBOLS);
     }
 
@@ -75,15 +90,24 @@ public class PasswordManagerService {
   }
 
   public static void main(String[] args) {
-    PasswordManagerService service = new PasswordManagerService();
+    /*PasswordGenerator service = new PasswordGenerator();
     PassSettingRequestDTO settingRequest
         = new PassSettingRequestDTO
         .Builder("secret")
         .applySymbols()
-        .passwordLength(10)
+        .passwordLength(12)
         .build();
     String pass = service.makePassword(settingRequest);
-    System.out.println(pass);
+    System.out.println(pass);*/
+
+    final Random r = new SecureRandom();
+    byte[] salt = new byte[32];
+    r.nextBytes(salt);
+    String encodedSalt = Base64.getEncoder().encodeToString(salt);
+    System.out.println(encodedSalt);
+
+    encodedSalt = "MGsyENbqQxWVueLbVvnlXZXmuAt86rwAeRlwzqLCy+w=";
+
   }
 
 }

@@ -5,9 +5,10 @@ the password length can by set by user default is 8;
 
 ### Example
 ```
-  service    : github.com -- service is optional
-  length     : 10
-  secretkey  : thisiskey -- required is required by user
+  service    : github.com     -- service is optional
+  length     : 10             -- limit is 40
+  secretkey  : thisiskey      -- required is required by user
   
-  random output : 76m5GpylQc 
+  random output : 76m5GpylQc
+ 
 ```
