@@ -99,14 +99,24 @@ public class PasswordGenerator {
         .build();
     String pass = service.makePassword(settingRequest);
     System.out.println(pass);*/
+    try {
 
-    final Random r = new SecureRandom();
-    byte[] salt = new byte[32];
-    r.nextBytes(salt);
-    String encodedSalt = Base64.getEncoder().encodeToString(salt);
-    System.out.println(encodedSalt);
+      // Create a secure random number generator using the SHA1PRNG algorithm
+      SecureRandom secureRandomGenerator = SecureRandom.getInstance("SHA1PRNG");
 
-    encodedSalt = "MGsyENbqQxWVueLbVvnlXZXmuAt86rwAeRlwzqLCy+w=";
+      // Get 128 random bytes
+      byte[] randomBytes = new byte[15];
+      secureRandomGenerator.nextBytes(randomBytes);
+
+
+
+      String encodedSalt2 = Base64.getEncoder().encodeToString(randomBytes);
+      System.out.println(encodedSalt2);
+
+
+    } catch (NoSuchAlgorithmException e) {
+    }
+
 
   }
 
