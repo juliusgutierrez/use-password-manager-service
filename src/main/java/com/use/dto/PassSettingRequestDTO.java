@@ -5,22 +5,19 @@ package com.use.dto;
  */
 public class PassSettingRequestDTO {
 
+  private boolean hasSymbols = true;
   private String service;
-  private boolean hasSymbols;
   private int passwordLength;
+  private String secretKey;
 
   public PassSettingRequestDTO() {
   }
 
-  public PassSettingRequestDTO(String service, boolean hasSymbols, int passwordLength) {
-    this.service = service;
-    this.hasSymbols = hasSymbols;
-    this.passwordLength = passwordLength;
-  }
-
-  public PassSettingRequestDTO(String service, int passwordLength) {
-    this.service = service;
-    this.passwordLength = passwordLength;
+  public PassSettingRequestDTO(Builder builder) {
+    this.hasSymbols = builder.hasSymbols;
+    this.service = builder.service;
+    this.passwordLength = builder.passwordLength;
+    this.secretKey = builder.secretKey;
   }
 
   public String getService() {
@@ -46,4 +43,44 @@ public class PassSettingRequestDTO {
   public void setPasswordLength(int passwordLength) {
     this.passwordLength = passwordLength;
   }
+
+  public String getSecretKey() {
+    return secretKey;
+  }
+
+  public void setSecretKey(String secretKey) {
+    this.secretKey = secretKey;
+  }
+
+  public static class Builder {
+
+    private boolean hasSymbols;
+    private String service;
+    private int passwordLength;
+    private String secretKey;
+
+    public Builder(String secretKey) {
+      this.secretKey = secretKey;
+    }
+
+    public Builder service(String service) {
+      this.service = service;
+      return this;
+    }
+
+    public Builder passwordLength(int passwordLength) {
+      this.passwordLength = passwordLength;
+      return this;
+    }
+
+    public Builder applySymbols() {
+      this.hasSymbols = Boolean.TRUE;
+      return this;
+    }
+
+    public PassSettingRequestDTO build() {
+      return new PassSettingRequestDTO(this);
+    }
+  }
+
 }

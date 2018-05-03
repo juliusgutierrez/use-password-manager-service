@@ -16,13 +16,12 @@ public class PasswordManagerService {
   private static final String LOWER_CASE = "abcdefghijklmnopqrstuvwxyz";
   private static final String NUMBERS = "0123456789";
   private static final String SYMBOLS = "!@#$%^&*()-_";
-  private static final String SECRET_KEY = "s3cr3t";
   private static final int DIGIT_16 = 16;
 
   public String makePassword(PassSettingRequestDTO settings) {
 
     final String password = RandomStringUtils.random(settings.getPasswordLength());
-    final String salt = getSalt(settings.getService());
+    final String salt = getSalt(settings.getSecretKey(), settings.getService());
     final String hexed = getHex(salt, password);
     BigInteger num = convertToDecimal(hexed);
 
@@ -42,13 +41,12 @@ public class PasswordManagerService {
   }
 
 
-  private String getSalt(String service) {
-    Validate.notNull(service, "service should not be null");
-    return getHex(SECRET_KEY, service);
+  private String getSalt(String secretKey, String service) {
+    Validate.notEmpty(secretKey, "'Secret Key' should not be null");
+    return getHex(secretKey, service);
   }
 
   private String getHex(String salt, String password) {
-    Validate.notNull(password, "password should not be null");
     return Hashing.sha256()
         .hashString(salt + password, StandardCharsets.UTF_8)
         .toString();
@@ -79,7 +77,11 @@ public class PasswordManagerService {
   public static void main(String[] args) {
     PasswordManagerService service = new PasswordManagerService();
     PassSettingRequestDTO settingRequest
-        = new PassSettingRequestDTO("github.com",10);
+        = new PassSettingRequestDTO
+        .Builder("secret")
+        .applySymbols()
+        .passwordLength(10)
+        .build();
     String pass = service.makePassword(settingRequest);
     System.out.println(pass);
   }
