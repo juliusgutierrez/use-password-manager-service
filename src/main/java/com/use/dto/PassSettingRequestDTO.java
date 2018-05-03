@@ -5,6 +5,7 @@ package com.use.dto;
  */
 public class PassSettingRequestDTO {
 
+  private static final int DEFAULT_PASSWORD_LENGTH = 8;
   private boolean hasSymbols = true;
   private String service;
   private int passwordLength;
@@ -37,6 +38,9 @@ public class PassSettingRequestDTO {
   }
 
   public int getPasswordLength() {
+    if(passwordLength == 0) {
+      return DEFAULT_PASSWORD_LENGTH;
+    }
     return passwordLength;
   }
 
