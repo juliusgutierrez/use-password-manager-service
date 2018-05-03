@@ -40,7 +40,7 @@ public class Encryptor {
     return cipher;
   }
 
-  private static SecretKeySpec generateKey(String key) {
+  private static SecretKeySpec generateKey(String key) throws Exception {
     return new SecretKeySpec(key.getBytes(), AES);
   }
 
