@@ -1,6 +1,8 @@
 package com.use.pm;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +19,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest(Encryptor.class)
 public class EncryptorTest {
 
-  private static final String KEY = "keyword098765432";
-  private static final String IVPARAM = "1234567890000000";
   private static final String PASSWORD_RAW = "password";
   private static final String PASSWORD_ENCRYPTED = "562HvUq4RCB9ws3FSwpDVQ==";
 
@@ -26,22 +26,22 @@ public class EncryptorTest {
   public void setUp() {
     PowerMockito.mockStatic(Encryptor.class);
     PowerMockito
-        .when(Encryptor.encrypt(PASSWORD_RAW, KEY, IVPARAM))
+        .when(Encryptor.encrypt(eq(PASSWORD_RAW), anyString(), anyString()))
         .thenReturn(PASSWORD_ENCRYPTED);
     PowerMockito
-        .when(Encryptor.decrypt(PASSWORD_ENCRYPTED, KEY, IVPARAM))
+        .when(Encryptor.decrypt(eq(PASSWORD_ENCRYPTED), anyString(), anyString()))
         .thenReturn(PASSWORD_RAW);
   }
 
   @Test
   public void testEncrypt() {
-    String output = Encryptor.encrypt(PASSWORD_RAW, KEY, IVPARAM);
+    String output = Encryptor.encrypt(PASSWORD_RAW, "key", "param");
     assertEquals(PASSWORD_ENCRYPTED, output);
   }
 
   @Test
   public void testDecrypt() {
-    String output = Encryptor.decrypt(PASSWORD_ENCRYPTED, KEY, IVPARAM);
+    String output = Encryptor.decrypt(PASSWORD_ENCRYPTED, "key", "param");
     assertEquals(PASSWORD_RAW, output);
   }
 
