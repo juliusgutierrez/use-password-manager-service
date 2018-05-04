@@ -1,14 +1,11 @@
 package com.use.pm;
 
+import com.use.exception.EncryptException;
+import com.use.exception.ErrorCode;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.security.spec.KeySpec;
 import java.util.Base64;
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -25,18 +22,25 @@ public class Encryptor {
       byte[] encrypted = cipher.doFinal(value.getBytes());
       return Base64.getEncoder().encodeToString(encrypted);
     } catch (Exception ex) {
-      ex.printStackTrace();
+      throw new EncryptException(ErrorCode.ENCRYPTION_ERROR);
     }
+  }
 
-    return null;
+  public static String decrypt(String value, String key, String ivParameter) {
+    try {
+      Cipher cipher = getCipherBy(Cipher.DECRYPT_MODE, key, ivParameter);
+      byte[] encrypted = cipher.doFinal(Base64.getDecoder().decode(value));
+      return new String(encrypted);
+    } catch (Exception ex) {
+      throw new EncryptException(ErrorCode.DECRYPTION_ERROR);
+    }
   }
 
   private static Cipher getCipherBy(int mode, String key, String ivParameter) throws Exception {
     IvParameterSpec ivParam = generateIvParameterSpec(ivParameter);
-    SecretKeySpec secreyKey = generateKey(key);
-
+    SecretKeySpec secretKey = generateKey(key);
     Cipher cipher = Cipher.getInstance(ALGORITHM);
-    cipher.init(mode, secreyKey, ivParam);
+    cipher.init(mode, secretKey, ivParam);
     return cipher;
   }
 
@@ -48,21 +52,10 @@ public class Encryptor {
     return new IvParameterSpec(ivParameter.getBytes(StandardCharsets.UTF_8));
   }
 
-
-
-
-  private static Key generateKey(String password, String keyValue, String salt) throws Exception {
-
-    SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-    KeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), 65536, 256);
-    SecretKey tmp = factory.generateSecret(spec);
-    SecretKey secret = new SecretKeySpec(tmp.getEncoded(), "AES");
-    return secret;
-  }
-
   public static void main(String[] args) {
     String e = Encryptor.encrypt("password", "keyword098765432", "1234567890000000");
     System.out.println(e);
+    System.out.println(Encryptor.decrypt(e, "keyword098765432", "1234567890000000"));
   }
 
 }
