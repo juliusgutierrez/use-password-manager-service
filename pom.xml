@@ -63,8 +63,8 @@
   </dependencies>
 
   <build>
+    <finalName>password-manager</finalName>
     <plugins>
-
       <!-- download source code in Eclipse, best practice -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

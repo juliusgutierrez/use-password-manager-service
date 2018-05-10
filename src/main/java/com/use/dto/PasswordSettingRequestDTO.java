@@ -3,7 +3,7 @@ package com.use.dto;
 /**
  * Created by julius on 02/05/2018.
  */
-public class PassSettingRequestDTO {
+public class PasswordSettingRequestDTO {
 
   private static final int DEFAULT_PASSWORD_LENGTH = 8;
   private static final int LIMIT_PASSWORD_LENGTH = 40;
@@ -12,10 +12,10 @@ public class PassSettingRequestDTO {
   private int passwordLength;
   private String secretKey;
 
-  public PassSettingRequestDTO() {
+  public PasswordSettingRequestDTO() {
   }
 
-  public PassSettingRequestDTO(Builder builder) {
+  public PasswordSettingRequestDTO(Builder builder) {
     this.hasSymbols = builder.hasSymbols;
     this.service = builder.service;
     this.passwordLength = builder.passwordLength;
@@ -85,8 +85,8 @@ public class PassSettingRequestDTO {
       return this;
     }
 
-    public PassSettingRequestDTO build() {
-      return new PassSettingRequestDTO(this);
+    public PasswordSettingRequestDTO build() {
+      return new PasswordSettingRequestDTO(this);
     }
   }
 

@@ -1,12 +1,9 @@
 package com.use.pm;
 
 import com.google.common.hash.Hashing;
-import com.use.dto.PassSettingRequestDTO;
+import com.use.dto.PasswordSettingRequestDTO;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.Random;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.Validate;
@@ -22,14 +19,18 @@ public class PasswordGenerator {
   private static final String SYMBOLS = "!@#$%^&*()-_";
   private static final int DIGIT_16 = 16;
 
+  public String makePassword() {
+    return makePassword(8, Boolean.TRUE);
+  }
+
   public String makePassword(int length, boolean hasSysbol) {
-    PassSettingRequestDTO settings = new PassSettingRequestDTO();
+    PasswordSettingRequestDTO settings = new PasswordSettingRequestDTO();
     settings.setHasSymbols(hasSysbol);
     settings.setPasswordLength(length);
     return makePassword(settings);
   }
 
-  public String makePassword(PassSettingRequestDTO settings) {
+  public String makePassword(PasswordSettingRequestDTO settings) {
 
     final String randomString = RandomStringUtils.random(settings.getPasswordLength());
     final String hexed = getHex(randomString);
@@ -41,12 +42,56 @@ public class PasswordGenerator {
 
     StringBuilder builder = new StringBuilder();
     for (int x = 0; x < settings.getPasswordLength(); x++) {
-      num = div(num, new BigInteger(basedLength.toString()));
-      int indeces = Math.abs(num.intValue() % basedLength);
-      builder.append(based[indeces]);
+      num = divide(num, new BigInteger(basedLength.toString()));
+      int indexes = Math.abs(num.intValue() % basedLength);
+      builder.append(based[indexes]);
     }
 
     return builder.toString();
+  }
+
+
+  public String generateRandomString(int noOfDigits, int noOfCapitalLetters, int noOfSpecialChar,
+      int lengthOfDesiredPassword) {
+
+    int countOptionAvailable = (noOfDigits + noOfCapitalLetters + noOfSpecialChar);
+    int noOfSmallLetters = (lengthOfDesiredPassword - countOptionAvailable);
+
+    if (lengthOfDesiredPassword < countOptionAvailable) {
+      throw new RuntimeException("Invalid config setup");
+    }
+
+    Random random = new Random();
+    final char[] digits = getCharBasedOnCriteria(noOfDigits, NUMBERS.toCharArray(), random);
+    final char[] specialChar = getCharBasedOnCriteria(noOfSpecialChar, SYMBOLS.toCharArray(),
+        random);
+    final char[] upperCaseLetter = getCharBasedOnCriteria(noOfCapitalLetters,
+        UPPER_CASE.toCharArray(),
+        random);
+    final char[] lowerCaseLetter = getCharBasedOnCriteria(noOfSmallLetters,
+        LOWER_CASE.toCharArray(),
+        random);
+    String password = Shuffle.doShuffle(
+        concatArraysToString(digits, upperCaseLetter, specialChar, lowerCaseLetter));
+    return password;
+  }
+
+  protected String concatArraysToString(char[]... arrayOfChar) {
+    StringBuilder builder = new StringBuilder();
+    for (char[] chars : arrayOfChar) {
+      builder.append(chars);
+    }
+    return builder.toString();
+  }
+
+  protected char[] getCharBasedOnCriteria(int size, char[] chars, Random random) {
+    char[] temp = new char[size];
+
+    for (int x = 0; x < size; x++) {
+      int randomInt = random.nextInt(chars.length);
+      temp[x] = chars[randomInt];
+    }
+    return temp;
   }
 
 
@@ -71,7 +116,7 @@ public class PasswordGenerator {
     return new BigInteger(hexed, DIGIT_16);
   }
 
-  private String buildBasedCharacters(PassSettingRequestDTO settings) {
+  private String buildBasedCharacters(PasswordSettingRequestDTO settings) {
     StringBuilder builder = new StringBuilder();
     builder.append(LOWER_CASE);
     builder.append(UPPER_CASE);
@@ -84,38 +129,15 @@ public class PasswordGenerator {
     return builder.toString();
   }
 
-  private BigInteger div(BigInteger x, BigInteger y) {
+  private BigInteger divide(BigInteger x, BigInteger y) {
     return new BigInteger(x.toString())
         .divide(new BigInteger(y.toString()));
   }
 
   public static void main(String[] args) {
-    /*PasswordGenerator service = new PasswordGenerator();
-    PassSettingRequestDTO settingRequest
-        = new PassSettingRequestDTO
-        .Builder("secret")
-        .applySymbols()
-        .passwordLength(12)
-        .build();
-    String pass = service.makePassword(settingRequest);
-    System.out.println(pass);*/
-    try {
+    PasswordGenerator passwordGenerator = new PasswordGenerator();
 
-      // Create a secure random number generator using the SHA1PRNG algorithm
-      SecureRandom secureRandomGenerator = SecureRandom.getInstance("SHA1PRNG");
-
-      // Get 128 random bytes
-      byte[] randomBytes = new byte[15];
-      secureRandomGenerator.nextBytes(randomBytes);
-
-
-
-      String encodedSalt2 = Base64.getEncoder().encodeToString(randomBytes);
-      System.out.println(encodedSalt2);
-
-
-    } catch (NoSuchAlgorithmException e) {
-    }
+    System.out.println(passwordGenerator.generateRandomString(0, 0, 0, 12));
 
 
   }
