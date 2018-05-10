@@ -1,14 +1,17 @@
 # use-password-manager-service
 
-Service class that create random password consisting of letters, numbers and symbols. 
-the password length can by set by user default is 8;
+PasswordGenerator class that create random password consisting of letters, numbers and symbols. 
 
 ### Example
 ```
-  service    : github.com     -- service is optional
-  length     : 10             -- limit is 40
-  secretkey  : thisiskey      -- required is required by user
+  PasswordGenerator generator = new PasswordGenerator();
+  noOfDigits = 2, 
+  noOfCapitalLetters = 1, 
+  noOfSpecialChar = 2, 
+  lengthOfDesiredPassword = 12
   
-  random output : 76m5GpylQc
+  generator.generateRandomString(noOfDigits, noOfCapitalLetters, noOfSpecialChar, lengthOfDesiredPassword);
+  
+  random output : y@fdrKjpf1%0
  
 ```
