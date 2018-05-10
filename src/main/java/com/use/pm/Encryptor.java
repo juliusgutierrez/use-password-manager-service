@@ -19,7 +19,7 @@ public class Encryptor {
   public static String encrypt(String value, String key, String ivParameter) {
     try {
       Cipher cipher = getCipherBy(Cipher.ENCRYPT_MODE, key, ivParameter);
-      byte[] encrypted = cipher.doFinal(value.getBytes());
+      byte[] encrypted = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
       return Base64.getEncoder().encodeToString(encrypted);
     } catch (Exception ex) {
       throw new EncryptException(ErrorCode.ENCRYPTION_ERROR);
@@ -30,7 +30,7 @@ public class Encryptor {
     try {
       Cipher cipher = getCipherBy(Cipher.DECRYPT_MODE, key, ivParameter);
       byte[] encrypted = cipher.doFinal(Base64.getDecoder().decode(value));
-      return new String(encrypted);
+      return new String(encrypted, StandardCharsets.UTF_8);
     } catch (Exception ex) {
       throw new EncryptException(ErrorCode.DECRYPTION_ERROR);
     }
@@ -45,7 +45,7 @@ public class Encryptor {
   }
 
   private static SecretKeySpec generateKey(String key) throws Exception {
-    return new SecretKeySpec(key.getBytes(), AES);
+    return new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), AES);
   }
 
   private static IvParameterSpec generateIvParameterSpec(String ivParameter) {
