@@ -10,7 +10,8 @@ PasswordGenerator class that create random password consisting of letters, numbe
   noOfSpecialChar = 2, 
   lengthOfDesiredPassword = 12
   
-  generator.generateRandomString(noOfDigits, noOfCapitalLetters, noOfSpecialChar, lengthOfDesiredPassword);
+  generator.generateRandomString(
+    noOfDigits, noOfCapitalLetters, noOfSpecialChar, lengthOfDesiredPassword);
   
   random output : y@fdrKjpf1%0
  
