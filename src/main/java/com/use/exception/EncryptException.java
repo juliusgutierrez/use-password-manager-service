@@ -26,4 +26,7 @@ public class EncryptException extends RuntimeException {
     this.errorCode = errorCode;
   }
 
+  public ErrorCode getErrorCode() {
+    return errorCode;
+  }
 }

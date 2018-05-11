@@ -14,6 +14,11 @@ public class Shuffle {
     return doShuffle(value.toCharArray());
   }
 
+  /**
+   * shuffle the elements of the array of char
+   * @param chars
+   * @return
+   */
   public static String doShuffle(char[] chars) {
     Random random = new Random();
     StringBuilder builder = new StringBuilder();
