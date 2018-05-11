@@ -23,6 +23,12 @@ public class PasswordGenerator {
     return makePassword(8, Boolean.TRUE);
   }
 
+  /**
+   * return a ramdom String just list a password
+   * @param length
+   * @param hasSysbol
+   * @return
+   */
   public String makePassword(int length, boolean hasSysbol) {
     PasswordSettingRequestDTO settings = new PasswordSettingRequestDTO();
     settings.setHasSymbols(hasSysbol);
@@ -30,6 +36,12 @@ public class PasswordGenerator {
     return makePassword(settings);
   }
 
+  /**
+   * return a ramdom String just list a password
+   *
+   * @param settings
+   * @return
+   */
   public String makePassword(PasswordSettingRequestDTO settings) {
 
     final String randomString = RandomStringUtils.random(settings.getPasswordLength());
@@ -51,11 +63,19 @@ public class PasswordGenerator {
   }
 
 
+  /**
+   * Generate a random string based on the parameter given
+   * @param noOfDigits
+   * @param noOfCapitalLetters
+   * @param noOfSpecialChar
+   * @param lengthOfDesiredPassword
+   * @return
+   */
   public String generateRandomString(int noOfDigits, int noOfCapitalLetters, int noOfSpecialChar,
       int lengthOfDesiredPassword) {
 
-    int countOptionAvailable = (noOfDigits + noOfCapitalLetters + noOfSpecialChar);
-    int noOfSmallLetters = (lengthOfDesiredPassword - countOptionAvailable);
+    int countOptionAvailable = noOfDigits + noOfCapitalLetters + noOfSpecialChar;
+    int noOfSmallLetters = lengthOfDesiredPassword - countOptionAvailable;
 
     if (lengthOfDesiredPassword < countOptionAvailable) {
       throw new RuntimeException("Invalid config setup");
@@ -95,12 +115,24 @@ public class PasswordGenerator {
   }
 
 
-  private String getSalt(String secretKey, String service) {
+  /**
+   * return a hexadecimal string
+   * @param secretKey
+   * @param service
+   * @return
+   */
+  public String getSalt(String secretKey, String service) {
     Validate.notEmpty(secretKey, "'Secret Key' should not be null");
     return getHex(secretKey, service);
   }
 
-  private String getHex(String salt, String password) {
+  /**return a hexadecimal string
+   *
+   * @param salt
+   * @param password
+   * @return
+   */
+  public String getHex(String salt, String password) {
     return Hashing.sha256()
         .hashString(salt + password, StandardCharsets.UTF_8)
         .toString();
@@ -132,14 +164,6 @@ public class PasswordGenerator {
   private BigInteger divide(BigInteger x, BigInteger y) {
     return new BigInteger(x.toString())
         .divide(new BigInteger(y.toString()));
-  }
-
-  public static void main(String[] args) {
-    PasswordGenerator passwordGenerator = new PasswordGenerator();
-
-    System.out.println(passwordGenerator.generateRandomString(0, 0, 0, 12));
-
-
   }
 
 }
